@@ -3,11 +3,21 @@ from player import Player
 import os
 import copy
 
+class WinException(Exception):
+    """Raised when player finishes last level"""
+    pass
+
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 class Game:
     """
+    Game: 
+        handles game logic, player\'s input and displays level state
+
+    Raises:
+        WinException: If level_index == MAX_LEVEL, indicating the player won the game
+
     Tiles description:
 
         p (str) : Player tile (your character)
@@ -15,6 +25,9 @@ class Game:
         a (str) : Air tile (empty space)
         s (str) : Spike tile (kills the player)
         f (str) : Finish tile (completes the level and increases level_index by 1)
+        d (str) : Door tile (requires key to open)
+        k (str) : Key tile (opens the door when player.keys > 0 otherwise acts like a wall)
+        e (str) : Empty tile (used for visual spacing)
     """
     GAME_UI = {
         "p": "@",
@@ -23,8 +36,10 @@ class Game:
         "s": "*",
         "f": "+",
         "k": "-",
-        "d": "o"
+        "d": "o",
+        "e": " "
     }
+    MAX_LEVEL = 5
 
 
     def __init__(self):
@@ -32,10 +47,26 @@ class Game:
         self.level_index = 0
         self.player = Player()
         self.load_level(self.level_index)
-        self.display_grid()
+        print("="*40)
+        print("Use W A S D to move around the map")
+        print("Type 'h' for help or 'l' for tiles legend")
+        print("Type 'exit' to finish program")
+        input("Press Enter to begin...")
     
     def load_level(self, level_index):
-        self.player.has_key = False
+
+        """
+        Method which loads next level
+
+        Args:
+            level_index (int) : Index of level to load
+        Exceptions:
+            WinException: player finished last level
+        """
+
+        if level_index == self.MAX_LEVEL:
+            raise WinException("You won!")
+        self.player.keys = 0
         level_grid = copy.deepcopy(Levels[level_index]['grid'])
         level_start_pos = Levels[level_index]['start_pos']
 
@@ -51,9 +82,10 @@ class Game:
 
     def show_info(self):
         print(f"<- Level {self.level_index+1} ->")
-        print(f"Key: {'Yes' if self.player.has_key else 'No'}")
+        print(f"Keys: {self.player.keys}")
         print(f"h - help")
         print(f"l - legend")
+        print(f"r - restart")
 
     def run_tick(self):
         clear_screen()
@@ -66,11 +98,8 @@ class Game:
     def make_move(self):
 
         def death():
-            start_x, start_y = Levels[self.level_index]["start_pos"]
-            cur_x, cur_y = self.player.position
-            self.level[cur_y][cur_x] = 'a'
-            self.level[start_y][start_x] = 'p'
-            self.player.position = Levels[self.level_index]["start_pos"]
+            self.player.keys = 0
+            self.load_level(self.level_index)
 
         def next_state_get(next_tile):
             x, y = next_tile
@@ -87,9 +116,16 @@ class Game:
                 return "key"
             elif next_t == "d":
                 return "door"
+            elif next_t == "e":
+                return "empty"
 
-        inp = str(input("Input: ").strip())
+        inp = str(input("Enter command: ").strip())
         next_tile = self.player.position.copy()
+
+        if inp not in ["w", "a", "s", "d", "h", "l", "r", "restart", "exit"]:
+            print("Invalid input! Use <h> if you need help!")
+            input("Press Enter to continue...")
+            return
 
         if inp == "w":
             next_tile[1] -= 1
@@ -102,11 +138,15 @@ class Game:
         
 
         if inp == "h":
+            clear_screen()
             print(f"Movement:\n  <w>: up\n  <a>: right\n  <s>: down\n  <d>: left\n  <r>: reset level\n  <restart>: restarts the game from 0\n  <exit>: exits the program\n")
             input("Press Enter to continue...")
+            return
         if inp == "l":
+            clear_screen()
             print(f"Tiles:\n  <#>: wall\n  <@>: player\n  <.>: air\n  <*>: spike\n  <->: key\n  <o>: door\n  <+>: finish\n")
             input("Press Enter to continue...")
+            return
         if inp == "r":
             self.load_level(self.level_index)
             return
@@ -115,13 +155,9 @@ class Game:
             self.load_level(0)
             return
         if inp == "exit":
+            clear_screen()
             print("Game closed...")
             raise SystemExit()
-
-        if inp == "debug":
-            num = int(input("level: "))
-            self.level_index = num - 1
-            self.load_level(self.level_index)
 
         next_state = next_state_get(next_tile)
 
@@ -137,29 +173,16 @@ class Game:
             self.level_index += 1
             self.load_level(self.level_index)
         elif next_state == "key":
-            self.player.has_key = True
+            self.player.keys += 1
             self.level[self.player.position[1]][self.player.position[0]] = "a"
             self.player.position = next_tile
             self.level[self.player.position[1]][self.player.position[0]] = "p"
+
         elif next_state == "door":
-            if not self.player.has_key:
+            if self.player.keys < 1:
                 pass
             else:
                 self.level[self.player.position[1]][self.player.position[0]] = "a"
                 self.player.position = next_tile
                 self.level[self.player.position[1]][self.player.position[0]] = "p"
-                self.player.has_key = False
-
-        
-        
-
-
-        
-    
-    
-
-game = Game()
-
-running = True
-while running:
-    game.run_tick()
+                self.player.keys -= 1

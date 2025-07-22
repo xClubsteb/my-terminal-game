@@ -1,41 +1,28 @@
-default_case = {
-    "level_index": None,
-    "start_pos": [None, None],
-    "grid": [
-        list("wwwwwwwwww"),
-        list("waaaaaaaaw"),
-        list("waaaaaaaaw"),
-        list("waaaaaaaaw"),
-        list("wwwwwwwwww")
-    ]
-}
-
 Levels = [
     {
         "level_index": 0,
-        "start_pos": [2, 2],
+        "start_pos": [1, 2],
         "grid": [
-            list("wwwwwwwwww"),
-            list("waaaaaaaaw"),
-            list("waaaaaafaw"),
-            list("waaaaaaaaw"),
-            list("wwwwwwwwww")
+            list("ewwwwwee"),
+            list("wwaaawwe"),
+            list("waaaafwe"),
+            list("wwaaawwe"),
+            list("ewwwwwee")
         ]
     },
     {
     "level_index": 1,
-    "start_pos": [2, 2],
+    "start_pos": [1, 2],
     "grid": [
-        list("wwwwwwwwwww"),
-        list("waaasaaaaaw"),
-        list("waaasasafaw"),
-        list("waaaaasaaaw"),
-        list("wwwwwwwwww")
+        list("wwwwwww"),
+        list("waaasfw"),
+        list("wasaaaw"),
+        list("wwwwwww")
     ]
     },
     {
         "level_index": 2,
-        "start_pos": [2, 2],
+        "start_pos": [2, 1],
         "grid": [
             list("wwwwwwwww"),
             list("waaawaaaw"),
@@ -46,24 +33,42 @@ Levels = [
     },
     {
         "level_index": 3,
-        "start_pos": [1, 1],
+        "start_pos": [3, 3],#x, y
         "grid": [
-            list("wwwww"),
-            list("wwwww"),
-            list("wwwww"),
-            list("wwwww"),
-            list("wwwww")
+            list("eeewwwwwwwwweee"),
+            list("eeewadaaakaweee"),
+            list("wwwwawwwwwswwww"),
+            list("wkaaaweeewadafw"),
+            list("wwwwawwwwwawwww"),
+            list("eeewadaaakaweee"),
+            list("eeewwwwwwwwweee")
         ]
     },
     {
         "level_index": 4,
         "start_pos": [1, 1],
         "grid": [
-            list("wwwww"),
-            list("wwwww"),
-            list("wwwww"),
-            list("wwwww"),
-            list("wwwww")
+            list("wwwwwwwwww"),
+            list("waawfwaaaw"),
+            list("wwawawawaw"),
+            list("waawaaawaw"),
+            list("wawwwwwwaw"),
+            list("waaaaaaaaw"),
+            list("wwwwwwwwww")
         ]
     }
 ]
+
+canvas = """
+
+wwwwwwwwww
+waawfwaaaw
+wwawawawaw
+waawaaawaw
+wawwwwwwa
+waaaaaaawww
+wawwwwwwwpw
+waaaaaaaaaw
+wwwwwwwwwww
+
+"""
